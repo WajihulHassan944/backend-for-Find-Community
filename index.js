@@ -80,6 +80,7 @@ app.post('/events', (req, res) => {
     date: req.body.date,
     description: req.body.description,
     location: req.body.location,
+    locationValue:req.body.locationValue
   });
 
   event.save()
