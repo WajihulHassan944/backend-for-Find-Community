@@ -40,6 +40,7 @@ const Event = mongoose.model('Event', {
   date: Date,
   description: String,
   location: String,
+  locationValue : String,
 });
 
 app.post('/communities', (req, res) => {
@@ -95,8 +96,8 @@ app.post('/events', (req, res) => {
 app.get('/events', (req, res) => {
   const query = {};
 
-  if (req.query.location) {
-    query.location = req.query.location;
+  if (req.query.locationValue) {
+    query.locationValue = req.query.locationValue;
   }
 
   Event.find(query)
