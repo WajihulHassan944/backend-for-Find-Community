@@ -59,20 +59,46 @@ app.post('/communities', (req, res) => {
     });
 });
 
-app.get('/communities', (req, res) => {
-  const query = {};
 
-  if (req.query.interest) {
-    query.interest = req.query.interest;
+app.get('/communities/:key', async (req, res) => {
+  try {
+    const searchQuery = req.params.key;
+    const searchRegex = new RegExp(searchQuery, 'i');
+    const results = await Community.find({
+      $or: [
+        { name: searchRegex },
+        { interest: searchRegex },
+        { description: searchRegex }
+      ]
+    }).exec();
+    res.json(results);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Internal server error' });
   }
+});
 
-  Community.find(query)
-    .then((communities) => {
-      res.send(communities);
-    })
-    .catch((err) => {
-      res.status(500).send({ error: err });
-    });
+
+
+
+app.get('/events/:key', async (req, res) => {
+  try {
+    const searchQuery = req.params.key;
+    const searchRegex = new RegExp(searchQuery, 'i');
+    const results = await Event.find({
+      $or: [
+        { name: searchRegex },
+        { date: searchRegex },
+        { description: searchRegex },
+        { location: searchRegex },
+        { locationValue: searchRegex }
+      ]
+    }).exec();
+    res.json(results);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 });
 
 app.post('/events', (req, res) => {
@@ -87,22 +113,6 @@ app.post('/events', (req, res) => {
   event.save()
     .then(() => {
       res.send({ message: 'Event created successfully' });
-    })
-    .catch((err) => {
-      res.status(500).send({ error: err });
-    });
-});
-
-app.get('/events', (req, res) => {
-  const query = {};
-
-  if (req.query.locationValue) {
-    query.locationValue = req.query.locationValue;
-  }
-
-  Event.find(query)
-    .then((events) => {
-      res.send(events);
     })
     .catch((err) => {
       res.status(500).send({ error: err });
