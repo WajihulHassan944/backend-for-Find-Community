@@ -37,7 +37,7 @@ const Community =  mongoose.model('Community', {
 
 const Event = mongoose.model('Event', {
   name: String,
-  date: Date,
+  date: String,
   description: String,
   location: String,
   locationValue : String,
@@ -88,6 +88,7 @@ app.get('/events/:key', async (req, res) => {
     const results = await Event.find({
       $or: [
         { name: searchRegex },
+        { date: searchRegex },
         { description: searchRegex },
         { location: searchRegex },
         { locationValue: searchRegex }
@@ -99,18 +100,6 @@ app.get('/events/:key', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
-app.get('/events/date/:date', async (req, res) => {
-  try {
-    const searchDate = new Date(req.params.date);
-    const results = await Event.find({ date: { $eq: searchDate } }).exec();
-    res.json(results);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
-
 
 app.post('/events', (req, res) => {
   const event = new Event({
