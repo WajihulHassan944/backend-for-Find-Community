@@ -120,6 +120,27 @@ app.post('/events', (req, res) => {
 });
   
 
+app.get('/communities', async (req, res) => {
+  try {
+    const events = await Community.find({});
+    res.send(events);
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+});
+
+
+app.get('/events', async (req, res) => {
+  try {
+    const events = await Event.find({});
+    res.send(events);
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+});
+
 
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
