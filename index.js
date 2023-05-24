@@ -101,6 +101,8 @@ app.put('/communities/:id', async (req, res) => {
   }
 });
 
+
+
 // Delete a community
 app.delete('/communities/:id', async (req, res) => {
   try {
@@ -119,6 +121,8 @@ app.delete('/communities/:id', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
 
 
 app.get('/events/:key', async (req, res) => {
@@ -140,6 +144,58 @@ app.get('/events/:key', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+
+
+// Delete a event
+app.delete('/events/:id', async (req, res) => {
+  try {
+    const eventId = req.params.id;
+
+    // Find the event by ID and delete it
+    const deletedEvent = await Event.findByIdAndRemove(eventId);
+
+    if (!deletedEvent) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    res.json({ message: 'Event deleted' });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+app.put('/events/:id', async (req, res) => {
+  try {
+    const eventId = req.params.id;
+    const {name, date,
+      description,
+ location,
+      locationValue } = req.body;
+
+    const updatedEvent = await Event.findByIdAndUpdate(
+      eventId,
+      {name, date,
+        description,
+   location,
+        locationValue },
+      { new: true }
+    );
+
+    if (!updatedEvent) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    res.json(updatedEvent);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 
 app.post('/events', (req, res) => {
   const event = new Event({
