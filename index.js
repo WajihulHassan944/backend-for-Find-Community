@@ -78,7 +78,47 @@ app.get('/communities/:key', async (req, res) => {
   }
 });
 
+app.put('/communities/:id', async (req, res) => {
+  try {
+    const communityId = req.params.id;
+    const { name, interest, description } = req.body;
 
+    // Find the community by ID and update its values
+    const updatedCommunity = await Community.findByIdAndUpdate(
+      communityId,
+      { name, interest, description },
+      { new: true }
+    );
+
+    if (!updatedCommunity) {
+      return res.status(404).json({ error: 'Community not found' });
+    }
+
+    res.json(updatedCommunity);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Delete a community
+app.delete('/communities/:id', async (req, res) => {
+  try {
+    const communityId = req.params.id;
+
+    // Find the community by ID and delete it
+    const deletedCommunity = await Community.findByIdAndRemove(communityId);
+
+    if (!deletedCommunity) {
+      return res.status(404).json({ error: 'Community not found' });
+    }
+
+    res.json({ message: 'Community deleted' });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
 app.get('/events/:key', async (req, res) => {
